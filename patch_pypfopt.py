@@ -62,38 +62,33 @@ def patch_pypfopt_plotting(plotting_path):
         print("PyPortfolioOpt plotting module already patched.")
         return True
     
-    # Define the patterns to find and replace
-    to_find = 'try:\n    import matplotlib.pyplot as plt\nexcept (ModuleNotFoundError, ImportError):'
-    to_replace = 'try:\n    import matplotlib.pyplot as plt\n    import seaborn as sns\n    # Register seaborn styles\n    sns.set_theme()\n    try:\n        plt.style.use("seaborn-deep")\n    except OSError:\n        plt.style.use("default")\nexcept (ModuleNotFoundError, ImportError):'
-    
-    # Alternative pattern if first one not found
-    alt_find = 'import matplotlib.pyplot as plt'
-    alt_replace = 'import matplotlib.pyplot as plt\nimport seaborn as sns\n# Register seaborn styles\nsns.set_theme()\ntry:\n    plt.style.use("seaborn-deep")\nexcept OSError:\n    plt.style.use("default")'
-    
-    patched_content = None
-    if to_find in content:
-        patched_content = content.replace(to_find, to_replace)
-    elif alt_find in content:
-        patched_content = content.replace(alt_find, alt_replace)
+    # Import matplotlib section
+    if 'import matplotlib.pyplot as plt' in content:
+        # Read the file line by line to ensure proper patching
+        with open(plotting_path, 'r') as f:
+            lines = f.readlines()
+        
+        # Find the matplotlib import line
+        for i, line in enumerate(lines):
+            if 'import matplotlib.pyplot as plt' in line and 'try:' not in line:
+                # Simple case - just an import without try/except
+                lines[i] = 'import matplotlib.pyplot as plt\nimport seaborn as sns\n\n# Register seaborn styles\nsns.set_theme()\ntry:\n    plt.style.use("seaborn-deep")\nexcept OSError:\n    plt.style.use("default")\n'
+                break
+            elif 'import matplotlib.pyplot as plt' in line and i > 0 and 'try:' in lines[i-1]:
+                # Complex case - import is inside a try/except block
+                # Add seaborn after matplotlib but before the except
+                lines[i] = '    import matplotlib.pyplot as plt\n    import seaborn as sns\n    # Register seaborn styles\n    sns.set_theme()\n    try:\n        plt.style.use("seaborn-deep")\n    except OSError:\n        plt.style.use("default")\n'
+                break
+        
+        # Write the modified content back
+        with open(plotting_path, 'w') as f:
+            f.writelines(lines)
+        
+        print("Successfully patched PyPortfolioOpt plotting module!")
+        return True
     else:
-        print("Could not find expected import pattern in plotting.py")
+        print("Could not find matplotlib import in plotting.py")
         return False
-    
-    # Backup the original file
-    backup_path = plotting_path + '.bak'
-    try:
-        with open(backup_path, 'w') as f:
-            f.write(content)
-        print(f"Backed up original file to: {backup_path}")
-    except Exception as e:
-        print(f"Warning: Could not create backup: {e}")
-    
-    # Write the patched content
-    with open(plotting_path, 'w') as f:
-        f.write(patched_content)
-    
-    print("Successfully patched PyPortfolioOpt plotting module!")
-    return True
 
 if __name__ == "__main__":
     plotting_path = find_plotting_module()
