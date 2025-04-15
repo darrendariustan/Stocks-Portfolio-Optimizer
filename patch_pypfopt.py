@@ -71,42 +71,23 @@ def patch_pypfopt_plotting(plotting_path):
     except Exception as e:
         print(f"Warning: Could not create backup: {e}")
     
-    # Just completely rewrite the file with a working version
-    patched_content = '''"""
-The ``plotting`` module houses all the functions to generate various plots.
-
-Currently implemented:
-
-  - ``plot_covariance`` - plot a correlation matrix
-  - ``plot_dendrogram`` - plot the hierarchical clusters in a portfolio
-  - ``plot_efficient_frontier`` – plot the efficient frontier from an EfficientFrontier or CLA object
-  - ``plot_weights`` - bar chart of weights
-"""
-
-import warnings
-
-import numpy as np
-import scipy.cluster.hierarchy as sch
-
-from . import CLA, EfficientFrontier, exceptions, risk_models
-
+    # Most drastic approach: replace the import of matplotlib.pyplot with a safe version
+    # This avoids any issues with splitting docstrings or code structure
+    new_content = content.replace(
+        'import matplotlib.pyplot as plt',
+        '''import matplotlib.pyplot as plt
+import seaborn as sns
+# Register seaborn styles
+sns.set_theme()
 try:
-    import matplotlib.pyplot as plt
-    import seaborn as sns
-    # Register seaborn styles
-    sns.set_theme()
-    try:
-        plt.style.use("seaborn-deep")
-    except OSError:
-        plt.style.use("default")
-except (ModuleNotFoundError, ImportError):  # pragma: no cover
-    raise ImportError("Please install matplotlib via pip or poetry")
-
-''' + content.split('"""')[3]  # Keep all the rest of the original content after the imports
+    plt.style.use("seaborn-deep")
+except OSError:
+    plt.style.use("default")'''
+    )
     
     # Write the patched content
     with open(plotting_path, 'w') as f:
-        f.write(patched_content)
+        f.write(new_content)
     
     print("Successfully patched PyPortfolioOpt plotting module!")
     return True
