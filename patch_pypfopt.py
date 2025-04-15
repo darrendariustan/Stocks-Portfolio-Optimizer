@@ -71,26 +71,24 @@ def patch_pypfopt_plotting(plotting_path):
     except Exception as e:
         print(f"Warning: Could not create backup: {e}")
     
-    # Most drastic approach: replace the import of matplotlib.pyplot with a safe version
-    # This avoids any issues with splitting docstrings or code structure
-    new_content = content.replace(
-        'import matplotlib.pyplot as plt',
-        '''import matplotlib.pyplot as plt
-import seaborn as sns
-# Register seaborn styles
-sns.set_theme()
-try:
-    plt.style.use("seaborn-deep")
-except OSError:
-    plt.style.use("default")'''
-    )
+    # Get the fixed plotting.py file from our repo
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    fixed_plotting_path = os.path.join(current_dir, 'fixed_plotting.py')
     
-    # Write the patched content
-    with open(plotting_path, 'w') as f:
-        f.write(new_content)
-    
-    print("Successfully patched PyPortfolioOpt plotting module!")
-    return True
+    if os.path.exists(fixed_plotting_path):
+        # Read the fixed version
+        with open(fixed_plotting_path, 'r') as f:
+            fixed_content = f.read()
+        
+        # Write the fixed version to the target
+        with open(plotting_path, 'w') as f:
+            f.write(fixed_content)
+        
+        print("Successfully replaced PyPortfolioOpt plotting module with fixed version!")
+        return True
+    else:
+        print(f"Error: Could not find fixed_plotting.py in {current_dir}")
+        return False
 
 if __name__ == "__main__":
     plotting_path = find_plotting_module()
