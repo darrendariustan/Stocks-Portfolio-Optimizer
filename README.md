@@ -4,6 +4,8 @@
 ![Streamlit](https://img.shields.io/badge/Streamlit-1.0+-red.svg)
 ![OpenAI](https://img.shields.io/badge/AI-GPT--4o-green.svg)
 
+## 🔗 [Try the Live Demo with your own API Key](https://stocks-portfolio-optimizer.onrender.com/)
+
 An advanced application that combines modern portfolio theory with artificial intelligence to optimize your investment strategy and provide real-time stock analysis.
 
 ## ✨ Key Features
