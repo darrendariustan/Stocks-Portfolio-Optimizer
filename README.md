@@ -53,9 +53,12 @@ pip install -r requirements.txt
 streamlit run finapp_final.py
 ```
 
-## 🔗 Live Demo
+## 🎥 Application Demo
 
-Check out the live app on [Streamlit Cloud](https://stock-portfolio-optimizer.streamlit.app/)
+A video demonstration of the application is available in the repository:
+- [App-demo.webm](App-demo.webm)
+
+Watch the demo to see all the features in action without needing to set up the environment locally.
 
 ## 🧠 AI Features
 
@@ -69,7 +72,3 @@ To utilize the AI features, you'll need an OpenAI API key. Enter your key in the
 - **Plotly & Matplotlib**: For interactive data visualization
 - **OpenAI API**: For AI-powered stock analysis and recommendations
 - **Pandas & NumPy**: For data manipulation and analysis
-
-## 🎥 Demo
-
-Check out the [App-demo.webm](App-demo.webm) file for a demonstration of the application in action.
