@@ -72,3 +72,21 @@ To utilize the AI features, you'll need an OpenAI API key. Enter your key in the
 - **Plotly & Matplotlib**: For interactive data visualization
 - **OpenAI API**: For AI-powered stock analysis and recommendations
 - **Pandas & NumPy**: For data manipulation and analysis
+
+## Render Deployment Instructions
+
+When deploying this application on Render, follow these steps:
+
+1. Connect your GitHub repository to Render
+2. Create a new Web Service 
+3. Use the following build command to ensure all dependencies are properly installed and the PyPortfolioOpt patch is applied:
+   ```
+   pip install -r requirements.txt && python patch_pypfopt.py
+   ```
+4. Set the start command to:
+   ```
+   streamlit run finapp_final.py
+   ```
+5. Add your OpenAI API key as an environment variable named `OPENAI_API_KEY`
+
+The `patch_pypfopt.py` script automatically fixes an issue with the PyPortfolioOpt library that can cause errors with the matplotlib "seaborn-deep" style on Render.
