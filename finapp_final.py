@@ -1,3 +1,12 @@
+import matplotlib.pyplot as plt
+import seaborn as sns
+# Manually register seaborn styles if not available
+try:
+    if "seaborn-deep" not in plt.style.available:
+        sns.set_theme()  # This will register seaborn styles with matplotlib
+except Exception as e:
+    print(f"Could not register seaborn styles: {e}")
+
 import streamlit as st
 from pypfopt import EfficientFrontier
 from pypfopt import risk_models
@@ -8,8 +17,6 @@ import numpy as np
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go  # Add this import for candlestick charts
-import matplotlib.pyplot as plt
-import seaborn as sns
 from datetime import datetime
 from io import BytesIO # To display figures for efficient frontier later
 # from statsmodels.tsa.arima.model import ARIMA
