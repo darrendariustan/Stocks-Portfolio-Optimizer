@@ -282,29 +282,29 @@ def _plot_ef(ef, ef_param, ef_param_range, ax, show_assets, show_tickers, intera
         # Plot the efficient frontier
         rets = []
         risks = []
-        from pypfopt.utils import portfolio_performance
 
         if ef_param == "utility":
             for delta in ef_param_range:
                 ef_i = copy.deepcopy(ef)
-                ef_i.max_sharpe(risk_free_rate=0, risk_aversion=delta)
-                ret, risk, _ = portfolio_performance(
-                    ef_i.weights, ef_i.expected_returns, ef_i.cov_matrix
-                )
-                rets.append(ret)
-                risks.append(risk)
+                try:
+                    ef_i.max_sharpe(risk_free_rate=0, risk_aversion=delta)
+                    # Use the portfolio_performance method directly from EfficientFrontier
+                    ret, risk, _ = ef_i.portfolio_performance()
+                    rets.append(ret)
+                    risks.append(risk)
+                except exceptions.OptimizationError:
+                    continue
         elif ef_param == "return":
             for ret_i in ef_param_range:
                 ef_i = copy.deepcopy(ef)
                 try:
                     ef_i.efficient_return(ret_i)
+                    # Use the portfolio_performance method directly from EfficientFrontier
+                    ret, risk, _ = ef_i.portfolio_performance()
+                    rets.append(ret)
+                    risks.append(risk)
                 except exceptions.OptimizationError:
                     continue
-                ret, risk, _ = portfolio_performance(
-                    ef_i.weights, ef_i.expected_returns, ef_i.cov_matrix
-                )
-                rets.append(ret)
-                risks.append(risk)
 
     elif ef_param == "risk":
         # Unlike for utility or return, we cannot leverage the copy method,
@@ -338,6 +338,7 @@ def _plot_ef(ef, ef_param, ef_param_range, ax, show_assets, show_tickers, intera
             try:
                 w = ef_i.efficient_risk(np.sqrt(var))
                 if w is not None:
+                    # Use the portfolio_performance method directly from EfficientFrontier
                     ret, risk, _ = ef_i.portfolio_performance()
                     rets.append(ret)
                     risks.append(risk)
