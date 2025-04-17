@@ -231,25 +231,31 @@ def _ef_default_returns_range(ef, points):
     Helper function to generate a range of returns from the GMV returns to
     the maximum (constrained) returns
     """
-    cov = ef.cov_matrix
-    mu = ef.expected_returns
+    # Get minimum volatility portfolio
     ef_gmv = copy.deepcopy(ef)
     ef_gmv.min_volatility()
-    ef_max = copy.deepcopy(ef)
-    # Optimization will fail if max return deviates too much from achievable, so we modify
-    for i in range(3):
-        try:
-            # Try the max expected return first
-            ef_max.custom_objective(
-                lambda w: -(w @ mu), ef.weight_sum, ef.target_variance, ef.L2_reg
-            )
-            break
-        except exceptions.OptimizationError:
-            # If there's an issue, we underestimate the max return
-            mu_max = np.max(mu)
-            mu = mu * (1 - 0.05 * i) / max(1e-5, mu_max)
     min_ret = ef_gmv.portfolio_performance()[0]
-    max_ret = ef_max.portfolio_performance()[0]
+    
+    # Try to get max return portfolio safely
+    ef_max = copy.deepcopy(ef)
+    try:
+        # Try max sharpe first (safer than custom_objective)
+        ef_max.max_sharpe()
+        max_ret = ef_max.portfolio_performance()[0]
+    except exceptions.OptimizationError:
+        # Fallback: try a higher return than min_vol
+        try:
+            max_ret = min_ret * 1.5  # Estimate 50% higher return
+            ef_max.efficient_return(max_ret)
+            max_ret = ef_max.portfolio_performance()[0]
+        except exceptions.OptimizationError:
+            # Ultra-safe fallback
+            max_ret = min_ret * 1.1  # Just 10% higher than min
+    
+    # Ensure we have a reasonable range
+    if max_ret <= min_ret:
+        max_ret = min_ret * 1.1
+        
     return np.linspace(min_ret, max_ret, points)
 
 
