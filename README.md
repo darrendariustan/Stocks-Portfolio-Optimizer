@@ -55,12 +55,12 @@ pip install -r requirements.txt
 streamlit run finapp_final.py
 ```
 
-## 🎥 Application Demo
+## �� Application Demo
 
-A video demonstration of the application is available in the repository:
-- [App-demo.webm](App-demo.webm)
+Video demonstrations of the application are available in the repository:
+- [PDAI_LLM2_Demo.webm](PDAI_LLM2_Demo.webm) - PDAI LLM Project 2 demonstration
 
-Watch the demo to see all the features in action without needing to set up the environment locally.
+Watch the demos to see all the features in action without needing to set up the environment locally.
 
 ## 🧠 AI Features
 
