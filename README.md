@@ -58,7 +58,7 @@ streamlit run finapp_final.py
 ## �� Application Demo
 
 Video demonstrations of the application are available in the repository:
-- [PDAI_LLM2_Demo.webm](PDAI_LLM2_Demo.webm) - PDAI LLM Project 2 demonstration
+- [Stock Portfolio Optimizer on Youtube](https://www.youtube.com/watch?v=5cHdvnzOlik) 
 
 Watch the demos to see all the features in action without needing to set up the environment locally.
 
